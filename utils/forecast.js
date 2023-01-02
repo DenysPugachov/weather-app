@@ -5,16 +5,17 @@ const forecast = (lat, lon, callback) => {
     const codedCoordinates = encodeURIComponent(`${lat},${lon}`)
     const url = `http://api.weatherstack.com/current?access_key=886ded7a7622bf45e9faeef35df7cec3&query=${codedCoordinates}`
 
-    request({ url, json: true }, (err, res) => {
+    request({ url, json: true }, (err, {body}) => {
         if (err) {
             callback(`Unable to connect to weather service. Please check your network.`, undefined)
-        } else if (res.body.error) {
-            callback('Error :>> ', res.body.error.info, undefined)
+        } else if (body.error) {
+            callback('Error :>> ', body.error.info, undefined)
         } else {
+            const { temperature, feelslike } = body.current
             callback(undefined, {
-                temperature: res.body.current.temperature,
-                feelslike: res.body.current.feelslike,
-                // res: res
+                temperature,
+                feelslike
+                // body
             })
         }
     })
