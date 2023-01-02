@@ -1,19 +1,23 @@
-const request = require("request")
 const geocode = require("./utils/geocode")
 const forecast = require("./utils/forecast")
 
-forecast(51.1005, 17.0333, (err, data) => {
-    if (data) {
-        console.log(`It is currently in ${data.res.body.location.name} ${data.temperature} degrees out. \nIt is fillslike ${data.feelslike} out there.`)
-    } else {
-        console.log('err :>> ', err);
-    }
-})
+const address = process.argv[2]
 
-geocode("Wroclaw", (err, data) => {
-    if (data) {
-        console.log('data :>> ', data);
-    } else {
-        console.log('err :>> ', err);
-    }
-})
+if (!address) {
+    console.log("Please provide address in first argument.")
+} else {
+    geocode(address, (err, data) => {
+        if (err) {
+            return console.log('err :>> ', err);
+        }
+
+        forecast(data.latitude, data.longitude, (err, forecastData) => {
+            if (err) {
+                return console.log('err :>> ', err);
+            }
+            console.log('data.location :>> ', data.location);
+            console.log('forecastData :>> ', forecastData);
+            // console.log(`It is currently in ${data.res.body.location.name} ${data.temperature} degrees out. \nIt is fillslike ${data.feelslike} out there.`)
+        })
+    })
+}
